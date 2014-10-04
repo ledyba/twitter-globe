@@ -7,7 +7,12 @@ import twitter4j.FilterQuery
 object PublicStream extends Stream {
 	override def onRun(st:TwitterStream)={
 		println("Starting Public Stream...");
-		st.sample();
+		val pl = Array(
+				Array[Double](-180,-90),
+				Array[Double](180,90)
+				)
+		
+		st.filter(new FilterQuery().locations(pl));
 	}
 }
 

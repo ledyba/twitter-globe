@@ -58,21 +58,33 @@ abstract class Stream() {
 			}
 		}
 	}
+	private var lastProcessed = System.currentTimeMillis();
 	private def onPosted(status:Status):Unit = {
-		if(status.getGeoLocation() != null){
-			val geo = status.getGeoLocation();
-			onPosted(geo.getLongitude(), geo.getLatitude(), status, status.getUser());
-		}else if(status.getPlace() != null){
-			val pl = status.getPlace();
-			var lng=0.0;
-			var lat=0.0;
-			var total=0;
-			pl.getBoundingBoxCoordinates().foreach(x => x.foreach(t => {
-				total+=1;
-				lng += t.getLongitude();
-				lat += t.getLatitude();
-			}));
-			onPosted(lng/total, lat/total, status, status.getUser());
+		val now = System.currentTimeMillis;
+		val ok = synchronized {
+			if( now-lastProcessed <= 1000 ) {
+				false;
+			}else{
+				lastProcessed = now;
+				true;
+			}
+		}
+		if( ok ) {
+			if(status.getGeoLocation() != null){
+				val geo = status.getGeoLocation();
+				onPosted(geo.getLongitude(), geo.getLatitude(), status, status.getUser());
+			}else if(status.getPlace() != null){
+				val pl = status.getPlace();
+				var lng=0.0;
+				var lat=0.0;
+				var total=0;
+				pl.getBoundingBoxCoordinates().foreach(x => x.foreach(t => {
+					total+=1;
+					lng += t.getLongitude();
+					lat += t.getLatitude();
+				}));
+				onPosted(lng/total, lat/total, status, status.getUser());
+			}
 		}
 	}
 }

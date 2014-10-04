@@ -33,8 +33,8 @@ object TwitterGlobeBuild extends Build {
         "org.twitter4j" % "twitter4j-stream" % "4.0.2",
         "org.twitter4j" % "twitter4j-core" % "4.0.2",
 
-        "org.scalatra" %% "scalatra-atmosphere" % "2.3.0",
-        "org.scalatra" %% "scalatra-json" % "2.3.0",
+        "org.scalatra" %% "scalatra-atmosphere" % ScalatraVersion,
+        "org.scalatra" %% "scalatra-json" % ScalatraVersion,
         "org.json4s"   %% "json4s-jackson" % "3.2.10",
         "org.eclipse.jetty" % "jetty-websocket" % "8.1.15.v20140411" % "container"
       ),
