@@ -1,7 +1,34 @@
 var map;
 $(function() {
+	function DialogCache(map, max) {
+		var newDialog = function(){
+			var infoD = new google.maps.InfoWindow({
+				disableAutoPan: true
+			});
+			return infoD;
+		}
+		var cache = [];
+		var idx = 0;
+		for(var i=0;i<max;++i) {
+			cache.push(newDialog());
+		}
+		var open = function(contentDom, pos, z) {
+			var dlg = cache[idx];
+			idx = (idx+1) % max;
+			dlg.setContent(contentDom);
+			dlg.setPosition(pos);
+			dlg.setZIndex(z);
+			dlg.open(map);
+			return dlg;
+		};
+		var spr = {
+			open:open
+		};
+		return spr;
+	}
 	function Map(map){
 		var spr = {map:map};
+		var dlgCache = DialogCache(map, 5);
 		var z = 0;
 		spr.addMarker = function(dat){
 			var lat = dat.lat;
@@ -18,17 +45,7 @@ $(function() {
 				$d.append($("<div/>").text(msg))
 				$d.append($("<div/>").append($("<span/>").text("from ")).append($("<span/>").html(dat.client)))
 				$d.append($("<div/>").css("clear", "left"))
-				var infoD = new google.maps.InfoWindow({
-					disableAutoPan: true,
-					content:$d[0],
-					position:lastP
-				});
-				infoD.setZIndex(z);
-				++z;
-				infoD.open(map);
-				setTimeout( function() {
-					infoD.close();
-				}, 5000);
+				dlgCache.open($d[0], lastP, z);
 			};
 			image.src = dat.image;
 		}
