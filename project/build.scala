@@ -10,7 +10,7 @@ object TwitterGlobeBuild extends Build {
   val Name = "Twitter Globe"
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.11.1"
-  val ScalatraVersion = "2.3.0"
+  val ScalatraVersion = "2.3.1-SNAPSHOT"
 
   lazy val project = Project (
     "twitter-globe",
@@ -21,22 +21,21 @@ object TwitterGlobeBuild extends Build {
       version := Version,
       scalaVersion := ScalaVersion,
       resolvers += Classpaths.typesafeReleases,
+      resolvers += ("LocalRepo" at file(Path.userHome.absolutePath + "/.ivy2/local").getAbsolutePath),
       libraryDependencies ++= Seq(
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
-        "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
-        "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container",
-        "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar")),
-
+        "ch.qos.logback"              %  "logback-classic"     % "1.1.1"          % "runtime",
+        "org.eclipse.jetty"           %  "jetty-webapp"        % "9.1.5.v20140505"     % "container",
+        "org.eclipse.jetty"           %  "jetty-plus"          % "9.1.5.v20140505"     % "container;provided",
+        "org.eclipse.jetty.websocket" %  "websocket-server"    % "9.1.5.v20140505"     % "container;provided",
         "org.twitter4j" % "twitter4j-async" % "4.0.2",
         "org.twitter4j" % "twitter4j-stream" % "4.0.2",
         "org.twitter4j" % "twitter4j-core" % "4.0.2",
-
         "org.scalatra" %% "scalatra-atmosphere" % ScalatraVersion,
         "org.scalatra" %% "scalatra-json" % ScalatraVersion,
-        "org.json4s"   %% "json4s-jackson" % "3.2.10",
-        "org.eclipse.jetty" % "jetty-websocket" % "8.1.15.v20140411" % "container"
+        "org.json4s"   %% "json4s-jackson" % "3.2.10"
       ),
       scalateTemplateConfig in Compile <<= (sourceDirectory in Compile){ base =>
         Seq(

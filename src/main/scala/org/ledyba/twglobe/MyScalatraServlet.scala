@@ -18,6 +18,36 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import com.fasterxml.jackson.annotation.JsonFormat
 import twitter4j.Status
+import grizzled.slf4j.Logger
+
+
+class StreamClient(render : JValue => OutboundMessage ) extends AtmosphereClient with PublicStream.GeoListener {
+	@transient private[this] val lg = Logger[StreamClient]
+	override def receive ={
+		case Connected => {
+			PublicStream.addGeoListener(this);
+		}
+		case Disconnected(disconnector, _) => {
+			PublicStream.removeGeoListener(this);
+		}
+		case Error(_) => {
+			PublicStream.removeGeoListener(this);
+		}
+		case TextMessage(text) => Unit
+		case JsonMessage(json) => Unit
+	}
+	override def onPosted(lng:Double, lat:Double, status:Status, usr:User) = {
+		val v:JValue =
+			("lng" -> lng) ~
+			("lat" -> lat) ~
+			("msg" -> status.getText()) ~
+			("usr" -> usr.getScreenName()) ~
+			("image" -> usr.getBiggerProfileImageURL())~
+			("client" -> status.getSource());
+		val r = render(v);
+		broadcast(r, Me);
+	}
+}
 
 class MyScalatraServlet extends TwitterGlobeStack
 	with JValueResult
@@ -34,34 +64,7 @@ class MyScalatraServlet extends TwitterGlobeStack
 	protected implicit val jsonFormats: Formats = DefaultFormats
 	sealed class Post(lng:Double, lat:Double, usr:User, msg:String);
 	atmosphere("/public") {
-		new AtmosphereClient {
-			val f : PublicStream.GeoListener =
-				new PublicStream.GeoListener {
-					override def onPosted(lng:Double, lat:Double, status:Status, usr:User) = {
-						val v =
-							("lng" -> lng) ~
-							("lat" -> lat) ~
-							("msg" -> status.getText()) ~
-							("usr" -> usr.getScreenName()) ~
-							("image" -> usr.getBiggerProfileImageURL())~
-							("client" -> status.getSource());
-						send(compact(render(v)));
-					}
-				};
-			override def receive ={
-				case Connected => {
-					PublicStream.addGeoListener(f);
-				}
-				case Disconnected(disconnector, Some(error)) => {
-					PublicStream.removeGeoListener(f);
-				}
-				case Error(Some(error)) => {
-					PublicStream.removeGeoListener(f);
-				}
-				case TextMessage(text) => Unit
-				case JsonMessage(json) => Unit
-			}
-		};
+		new StreamClient(x => compact(render(x)));
 	}
 
 }
