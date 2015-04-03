@@ -10,7 +10,7 @@ object TwitterGlobeBuild extends Build {
   val Name = "Twitter Globe"
   val Version = "0.1.0-SNAPSHOT"
   val ScalaVersion = "2.11.1"
-  val ScalatraVersion = "2.3.1-SNAPSHOT"
+  val ScalatraVersion = "2.3.0"
 
   lazy val project = Project (
     "twitter-globe",
@@ -20,8 +20,8 @@ object TwitterGlobeBuild extends Build {
       name := Name,
       version := Version,
       scalaVersion := ScalaVersion,
+      offline := false,
       resolvers += Classpaths.typesafeReleases,
-      resolvers += ("LocalRepo" at file(Path.userHome.absolutePath + "/.ivy2/local").getAbsolutePath),
       libraryDependencies ++= Seq(
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
@@ -30,9 +30,9 @@ object TwitterGlobeBuild extends Build {
         "org.eclipse.jetty"           %  "jetty-webapp"        % "9.1.5.v20140505"     % "container",
         "org.eclipse.jetty"           %  "jetty-plus"          % "9.1.5.v20140505"     % "container;provided",
         "org.eclipse.jetty.websocket" %  "websocket-server"    % "9.1.5.v20140505"     % "container;provided",
-        "org.twitter4j" % "twitter4j-async" % "4.0.2",
-        "org.twitter4j" % "twitter4j-stream" % "4.0.2",
-        "org.twitter4j" % "twitter4j-core" % "4.0.2",
+        "org.twitter4j" % "twitter4j-async" % "4.0.3",
+        "org.twitter4j" % "twitter4j-stream" % "4.0.3",
+        "org.twitter4j" % "twitter4j-core" % "4.0.3",
         "org.scalatra" %% "scalatra-atmosphere" % ScalatraVersion,
         "org.scalatra" %% "scalatra-json" % ScalatraVersion,
         "org.json4s"   %% "json4s-jackson" % "3.2.10"
