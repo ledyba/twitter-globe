@@ -28,7 +28,7 @@ $(function() {
 	}
 	function Map(map){
 		var spr = {map:map};
-		var dlgCache = DialogCache(map, 5);
+		var dlgCache = DialogCache(map, 10);
 		var z = 0;
 		spr.addMarker = function(dat){
 			var lat = dat.lat;
