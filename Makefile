@@ -6,17 +6,18 @@ all:
 
 get:
 	go get -u "github.com/jteeuwen/go-bindata/..."
+	go get -u "github.com/elazarl/go-bindata-assetfs/..."
 	go get -u "github.com/ChimeraCoder/anaconda"
 	go get -u "golang.org/x/net/websocket"
 	go get -u "github.com/tjgq/broadcast"
 
 bind:
-	$(GOPATH)/bin/go-bindata -pkg=main -o=assets.go ./assets/...
+	PATH=$(GOPATH)/bin:$(PATH) $(GOPATH)/bin/go-bindata-assetfs -pkg=main ./assets/...
 
 dbind:
-	$(GOPATH)/bin/go-bindata -debug=true -pkg=main -o=server/assets.go ./assets/...
+	PATH=$(GOPATH)/bin:$(PATH) $(GOPATH)/bin/go-bindata-assetfs -debug=true -pkg=main ./assets/...
 
-run:
+run: all
 	$(GOPATH)/bin/twitter-globe
 
 clean:

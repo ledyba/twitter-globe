@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ChimeraCoder/anaconda"
+	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/tjgq/broadcast"
 	"golang.org/x/net/websocket"
 )
@@ -86,10 +87,13 @@ func setUpTwitterStream() {
 func main() {
 	flag.Parse() // Scan the arguments list
 	broadcaster = broadcast.New(0)
-	setUpTwitterStream()
+	go setUpTwitterStream()
 	http.Handle("/public", websocket.Handler(websockHandler))
-	http.Handle("/", http.FileServer(http.Dir("./")))
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	http.Handle("/TwitterGlobe/", http.FileServer(&assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir}))
+	log.Print("Start...")
+	err := http.ListenAndServe(":8080", nil)
+	log.Print("Done.")
+	if err != nil {
 		panic("ListenAndServe: " + err.Error())
 	}
 }
