@@ -7,6 +7,8 @@ all:
 get:
 	go get -u "github.com/jteeuwen/go-bindata/..."
 	go get -u "github.com/ChimeraCoder/anaconda"
+	go get -u "golang.org/x/net/websocket"
+	go get -u "github.com/tjgq/broadcast"
 
 bind:
 	$(GOPATH)/bin/go-bindata -pkg=main -o=assets.go ./assets/...
