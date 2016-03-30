@@ -11,10 +11,11 @@ Social Globe is a web app that shows twitter public stream onto the Google Map.
 ## Build & Run ##
 
 ```sh
-$ cd Twitter_Globe
-$ ./sbt
-> container:start
-> browse
+$ git clone git@github.com:ledyba/twitter-globe.git
+$ cd twitter-globe
+$ make get # install dependencies
+$ make all # build programs
+$ make run # run
 ```
 
 If `browse` doesn't launch your browser, manually open [http://localhost:8080/](http://localhost:8080/) in your browser.
