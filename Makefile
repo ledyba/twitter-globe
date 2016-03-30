@@ -17,5 +17,5 @@ dbind:
 run:
 	$(GOPATH)/bin/twitter-globe
 
-clean:m
-	go clean github.com/ledyba/github-crawler/...
+clean:
+	go clean github.com/ledyba/twitter-globe/...
