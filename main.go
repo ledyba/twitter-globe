@@ -92,6 +92,8 @@ func setUpTwitterStream() {
 	}
 }
 
+var port = flag.Int("port", 8080, "")
+
 func main() {
 	flag.Parse() // Scan the arguments list
 	broadcaster = broadcast.New(0)
@@ -99,6 +101,6 @@ func main() {
 	http.Handle("/public", websocket.Handler(websockHandler))
 	http.Handle("/", http.FileServer(assetFS()))
 
-	log.Print("Start at http://localhost:8080/")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("Start at http://localhost:%d/", *port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
 }

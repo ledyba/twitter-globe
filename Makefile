@@ -1,4 +1,4 @@
-.PHONY: all get run clean bind dbind
+.PHONY: all get run clean bind dbind deploy
 
 all:
 	gofmt -w .
@@ -22,3 +22,8 @@ run: all
 
 clean:
 	go clean github.com/ledyba/twitter-globe/...
+
+deploy: bind
+	GOOS=linux GOARCH=amd64 go build -o twitter-globe github.com/ledyba/twitter-globe/...
+	ssh ledyba.org mkdir -p /opt/run/twitter-globe
+	scp twitter-globe twitter-globe.conf ledyba:/opt/run/twitter-globe
