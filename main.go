@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
 	"github.com/ChimeraCoder/anaconda"
-	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/tjgq/broadcast"
 	"golang.org/x/net/websocket"
 )
@@ -65,16 +65,17 @@ func websockHandler(ws *websocket.Conn) {
 
 }
 
-func setUpTwitterStream() {
-	anaconda.SetConsumerKey(ConsumerKey)
-	anaconda.SetConsumerSecret(ConsumerSecret)
+func repeatStreaming() {
 	tw := anaconda.NewTwitterApi(OAuthToken, OAuthSecret)
 	defer tw.Close()
-	stream := tw.UserStream(nil)
+	values := url.Values{}
+	values.Add("locations", "-180,-90,180,90")
+	stream := tw.PublicStreamFilter(values)
 	for {
 		select {
-		case tweetRaw, closed := <-stream.C:
-			if closed {
+		case tweetRaw, received := <-stream.C:
+			if !received {
+				stream.Stop()
 				return
 			}
 			if tweet, ok := tweetRaw.(anaconda.Tweet); ok {
@@ -83,17 +84,21 @@ func setUpTwitterStream() {
 		}
 	}
 }
+func setUpTwitterStream() {
+	anaconda.SetConsumerKey(ConsumerKey)
+	anaconda.SetConsumerSecret(ConsumerSecret)
+	for {
+		repeatStreaming()
+	}
+}
 
 func main() {
 	flag.Parse() // Scan the arguments list
 	broadcaster = broadcast.New(0)
 	go setUpTwitterStream()
 	http.Handle("/public", websocket.Handler(websockHandler))
-	http.Handle("/TwitterGlobe/", http.FileServer(&assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir}))
-	log.Print("Start...")
-	err := http.ListenAndServe(":8080", nil)
-	log.Print("Done.")
-	if err != nil {
-		panic("ListenAndServe: " + err.Error())
-	}
+	http.Handle("/", http.FileServer(assetFS()))
+
+	log.Print("Start at http://localhost:8080/")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
