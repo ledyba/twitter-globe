@@ -1,27 +1,21 @@
-
-.PHONY: all jar run reload test install update template distclean
+.PHONY: all get run clean bind dbind
 
 all:
-	./sbt compile
+	gofmt -w .
+	go install github.com/ledyba/twitter-globe/...
 
-jar:
-	./sbt package
+get:
+	go get -u "github.com/jteeuwen/go-bindata/..."
+	go get -u "github.com/ChimeraCoder/anaconda"
+
+bind:
+	go-bindata -pkg=server -o=assets.go ./assets/...
+
+dbind:
+	go-bindata -debug=true -pkg=server -o=server/assets.go ./assets/...
 
 run:
-	read | echo -e "container:start\n~; copy-resources; aux-compile" | ./sbt
+	$(GOPATH)/bin/twitter-globe
 
-reload:
-	./sbt reload update-classifiers update-sbt-classifiers eclipse
-
-update:
-	./sbt reload update-classifiers update-sbt-classifiers
-
-test:
-	./sbt test
-
-install:
-	./sbt publishLocal publishM2
-
-distclean:
-	rm .lib -rf
-	rm target -rf
+clean:m
+	go clean github.com/ledyba/github-crawler/...
