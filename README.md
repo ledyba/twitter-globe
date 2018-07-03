@@ -6,7 +6,7 @@ Social Globe is a web app that shows twitter public stream onto the Open Street 
 
 ![ScreenShot](https://raw.github.com/ledyba/TwitterGlobe/master/screenshot.jpg)
 
-（サービスは終了しました）
+（サービスは終了しました / [開発当時の紹介](https://7io.org/2015/04/03/17:22:58/)）
 
 ## Build & Run ##
 
